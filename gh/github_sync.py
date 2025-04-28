@@ -26,8 +26,11 @@ class GitHubDataSync(object):
 
         logger.info("Fetching user repos from GitHub")
 
-        repos = self.github_client.get_user().get_repos(sort="updated",
-                                                        direction="desc")
+        repos = self.github_client.get_user().get_repos(
+            affiliation='owner,collaborator,organization_member',
+            visibility='all',
+            sort="updated",
+            direction="desc")
 
         # need to iterate all repos to force the PaginatesList to get all the results
         repo_data = []
