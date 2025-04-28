@@ -234,14 +234,21 @@ class GitHubExtension(Extension):
         """ List the repos owned by the user """
 
         items = []
-
         repos = self.cache.get_repos()
 
-        for repo in repos[:MAX_LIST_ITEMS]:
+        # Filter repos first based on the query
+        filtered_repos = []
+        if query:
+            query_lower = query.lower()
+            for repo in repos:
+                if query_lower in repo['fullname'].lower():
+                    filtered_repos.append(repo)
+        else:
+            # If no query, use all repos
+            filtered_repos = repos
 
-            if query and query.lower() not in repo['fullname'].lower():
-                continue
-
+        # Then take the top MAX_LIST_ITEMS from the filtered list
+        for repo in filtered_repos[:MAX_LIST_ITEMS]:
             items.append(
                 ExtensionResultItem(icon=self.icon_path,
                                     name=repo['fullname'],
